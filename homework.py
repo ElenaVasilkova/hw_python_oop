@@ -98,9 +98,14 @@ class SportsWalking(Training):
         self.height = height
 
     def get_spent_calories(self) -> float:
+        '''
+        Формула расчета калорий:
+        ((0.035 * вес + (средняя_скорость_в_метрах_в_секунду**2 
+        / рост_в_метрах)* 0.029 * вес) * время_тренировки_в_минутах) 
+        '''
         calories: float = ((self.CONST_SWALK1 * self.weight
                             + ((Training.get_mean_speed(self)
-                                / self.KMH_IN_MS)**2 / (self.height
+                                * self.KMH_IN_MS)**2 / (self.height
                                                         / self.CM_IN_M))
                             * self.CONST_SWALK2 * self.weight)
                            * (self.duration * self.H_IN_MIN))
