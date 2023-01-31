@@ -84,6 +84,7 @@ class Running(Training):
 class SportsWalking(Training):
     """Тренировка: спортивная ходьба."""
     KMH_IN_MS: float = 0.278
+    CM_IN_M = 100
     CONST_SWALK1: float = 0.035
     CONST_SWALK2: float = 0.029
 
@@ -99,7 +100,8 @@ class SportsWalking(Training):
     def get_spent_calories(self) -> float:
         calories: float = ((self.CONST_SWALK1 * self.weight
                             + ((Training.get_mean_speed(self)
-                                / self.KMH_IN_MS)**2 / self.height)
+                                / self.KMH_IN_MS)**2 / (self.height
+                                                        / self.CM_IN_M))
                             * self.CONST_SWALK2 * self.weight)
                            * (self.duration * self.H_IN_MIN))
         return calories
@@ -109,6 +111,7 @@ class Swimming(Training):
     """Тренировка: плавание."""
     CONST_MMEDIUM_SPEED: float = 1.1
     CONST_SPEED: int = 2
+    LEN_STEP = 1.38
 
     def __init__(self,
                  action: int,
@@ -120,7 +123,6 @@ class Swimming(Training):
         super().__init__(action, duration, weight)
         self.length_pool = length_pool
         self.count_pool = count_pool
-        self.LEN_STEP = 1.38
 
     def get_mean_speed(self) -> float:
         speed: float = (self.length_pool * self.count_pool
