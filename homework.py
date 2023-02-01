@@ -1,29 +1,25 @@
+from dataclasses import dataclass, asdict
+
+
+@dataclass
 class InfoMessage:
     """Информационное сообщение о тренировке."""
-    def __init__(self,
-                 training_type: str,
-                 duration: float,
-                 distance: float,
-                 speed: float,
-                 calories: int
-                 ) -> None:
-        self.training_type = training_type
-        self.duration = duration
-        self.distance = distance
-        self.speed = speed
-        self.calories = calories
+    training_type: str
+    duration: float
+    distance: float
+    speed: float
+    calories: int
+    MESSAGE: str = ('Тип тренировки: {}; '
+                    'Длительность: {:.3f} ч.; '
+                    'Дистанция: {:.3f} км; '
+                    'Ср. скорость: {:.3f} км/ч; '
+                    'Потрачено ккал: {:.3f}.')
 
-    # Объекты класса InfoMessage создаются
-    # вызовом метода show_training_info() для классов тренировок.
     def show_training_info(self) -> None:
         pass
 
     def get_message(self) -> str:
-        return (f'Тип тренировки: {self.training_type}; '
-                f'Длительность: {self.duration:.3f} ч.; '
-                f'Дистанция: {self.distance:.3f} км; '
-                f'Ср. скорость: {self.speed:.3f} км/ч; '
-                f'Потрачено ккал: {self.calories:.3f}.')
+        return (self.MESSAGE.format(*asdict(self).values()))
 
 
 class Training:
@@ -53,9 +49,9 @@ class Training:
 
     def get_spent_calories(self):
         """Получить количество затраченных калорий."""
-        pass
+        raise NotImplementedError(
+            f'Переопроедлите метод get_spent_calories в {type(self).__name__}')
 
-    # возвращает объект класса сообщения.
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
         massage: InfoMessage = InfoMessage(type(self).__name__,
@@ -111,7 +107,7 @@ class Swimming(Training):
     """Тренировка: плавание."""
     CONST_MMEDIUM_SPEED: float = 1.1
     CONST_SPEED: int = 2
-    LEN_STEP = 1.38
+    LEN_STEP: float = 1.38
 
     def __init__(self,
                  action: int,
@@ -137,7 +133,7 @@ class Swimming(Training):
 
 def read_package(workout_type: str, data: list) -> Training:
     """Прочитать данные полученные от датчиков."""
-    training_type: dict = {
+    training_type: dict() = {
         'SWM': Swimming,
         'RUN': Running,
         'WLK': SportsWalking
@@ -146,8 +142,8 @@ def read_package(workout_type: str, data: list) -> Training:
     try:
         training_class: Training = training_type[workout_type](*data)
         return training_class
-    except ZeroDivisionError:
-        print("Неверный ввод")
+    except KeyError:
+        raise ValueError('Неверный ввод')
 
 
 def main(training: Training) -> None:
