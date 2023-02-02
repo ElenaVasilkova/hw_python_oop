@@ -40,9 +40,8 @@ class Training:
 
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
-        distance: float = self.action * self.LEN_STEP / self.M_IN_KM
-        return distance
-
+        return self.action * self.LEN_STEP / self.M_IN_KM
+        
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
         speed: float = Training.get_distance(self) / self.duration
